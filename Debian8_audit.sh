@@ -2,68 +2,74 @@
 #Debian 8 Audit Script
 #Developed and Modified By jbjonesjr for use against Debian 8 benchmark v 1.0
 #Last Update Data : 27 January, 2017
-# Use following command to run this scipt 
+# Use following command to run this scipt
 # chmod +x Debian8_audit.sh
 # ./Debian8_audit.sh
 
 
 
-echo "Debian8 Audit Started" 
-echo "==================================================================================" 
-echo ">>>>> 1 Install Updates, Patches and Additional Security Software  <<<<< "
+echo "Debian8 Audit Started"
+echo "=================================================================================="
+
+echo "    *************** 1 Patching & Software Updates *****************"
 
 
-echo "==================================================================================" 
-echo ">>>>> 1 Filesystem Configuration  <<<<< "
-echo "2.1 Create Separate Partition for /tmp" 
-grep "[[:space:]]/tmp[[:space:]]" /etc/fstab 
 
-echo "=================================================================================="  
-echo "2.2 Set nodev option for /tmp Partition" 
-grep "[[:space:]]/tmp[[:space:]]" /etc/fstab | grep nodev 
-mount | grep "[[:space:]]/tmp[[:space:]]" | grep nodev 
+echo "=================================================================================="
+echo "    *************** 2 Filesystem Configuration *****************"
 
+echo "2.1 Create Separate Partition for /tmp"
+grep "[[:space:]]/tmp[[:space:]]" /etc/fstab
 
-echo "=================================================================================="  
-echo "2.3 Set nosuid option for /tmp Partition" 
-grep "[[:space:]]/tmp[[:space:]]" /etc/fstab | grep nosuid 
-mount | grep "[[:space:]]/tmp[[:space:]]" | grep nosuid 
+echo "=================================================================================="
+echo "2.2 Set nodev option for /tmp Partition"
+grep "[[:space:]]/tmp[[:space:]]" /etc/fstab | grep nodev
+echo "--"
+mount | grep "[[:space:]]/tmp[[:space:]]" | grep nodev
 
 
-echo "=================================================================================="  
-echo "2.4 Set noexec option for /tmp Partition" 
-grep "[[:space:]]/tmp[[:space:]]" /etc/fstab | grep noexec 
-mount | grep "[[:space:]]/tmp[[:space:]]" | grep noexec 
+echo "=================================================================================="
+echo "2.3 Set nosuid option for /tmp Partition"
+grep "[[:space:]]/tmp[[:space:]]" /etc/fstab | grep nosuid
+echo "--"
+mount | grep "[[:space:]]/tmp[[:space:]]" | grep nosuid
 
 
-echo "=================================================================================="  
-echo "2.5 Create Separate Partition for /var" 
-grep "[[:space:]]/var[[:space:]]" /etc/fstab 
+echo "=================================================================================="
+echo "2.4 Set noexec option for /tmp Partition"
+grep "[[:space:]]/tmp[[:space:]]" /etc/fstab | grep noexec
+echo "--"
+mount | grep "[[:space:]]/tmp[[:space:]]" | grep noexec
 
 
-echo "=================================================================================="  
-echo "2.6 Bind Mount the /var/tmp directory to /tmp" 
-grep -e "^/tmp[[:space:]]" /etc/fstab | grep /var/tmp  
-mount | grep -e "^/tmp[[:space:]]" | grep /var/tmp     
+echo "=================================================================================="
+echo "2.5 Create Separate Partition for /var"
+grep "[[:space:]]/var[[:space:]]" /etc/fstab
 
 
-echo "=================================================================================="  
-echo "2.7 Create Separate Partition for /var/log" 
-grep "[[:space:]]/var/log[[:space:]]" /etc/fstab    
-
-echo "=================================================================================="  
-echo "2.8 Create Separate Partition for /var/log/audit"  
-grep "[[:space:]]/var/log/audit[[:space:]]" /etc/fstab     
+echo "=================================================================================="
+echo "2.6 Bind Mount the /var/tmp directory to /tmp"
+grep -e "^/tmp[[:space:]]" /etc/fstab | grep /var/tmp
+mount | grep -e "^/tmp[[:space:]]" | grep /var/tmp
 
 
-echo "=================================================================================="  
-echo "2.9 Create Separate Partition for /home"   
-grep "[[:space:]]/home[[:space:]]" /etc/fstab  
+echo "=================================================================================="
+echo "2.7 Create Separate Partition for /var/log"
+grep "[[:space:]]/var/log[[:space:]]" /etc/fstab
 
-echo "=================================================================================="  
-echo "2.10 Add nodev Option to /home" 
-grep "[[:space:]]/home[[:space:]]" /etc/fstab 
-mount | grep /home  
+echo "=================================================================================="
+echo "2.8 Create Separate Partition for /var/log/audit"
+grep "[[:space:]]/var/log/audit[[:space:]]" /etc/fstab
+
+
+echo "=================================================================================="
+echo "2.9 Create Separate Partition for /home"
+grep "[[:space:]]/home[[:space:]]" /etc/fstab
+
+echo "=================================================================================="
+echo "2.10 Add nodev Option to /home"
+grep "[[:space:]]/home[[:space:]]" /etc/fstab
+mount | grep /home
 
 echo "=================================================================================="
 echo "2.11 Add nodev Option to Removable Media Partitions"
@@ -82,19 +88,20 @@ echo "work on it "
 
 
 echo "=================================================================================="
-echo "2.14 Add nodev Option to /dev/shm Partition"
-grep /dev/shm /etc/fstab | grep nodev
-mount | grep /dev/shm | grep nodev
+echo "2.14 Add nodev Option to /run/shm Partition"
+grep /run/shm /etc/fstab | grep nodev
+echo '--'
+mount | grep /run/shm | grep nodev
 
 echo "=================================================================================="
-echo "2.15 Add nosuid Option to /dev/shm Partition"
-grep /dev/shm /etc/fstab | grep nosuid
-mount | grep /dev/shm | grep nosuid
+echo "2.15 Add nosuid Option to /run/shm Partition"
+grep /run/shm /etc/fstab | grep nosuid
+mount | grep /run/shm | grep nosuid
 
 echo "=================================================================================="
-echo "2.16 Add noexec Option to /dev/shm Partition"
-grep /dev/shm /etc/fstab | grep noexec
-mount | grep /dev/shm | grep noexec
+echo "2.16 Add noexec Option to /run/shm Partition"
+grep /run/shm /etc/fstab | grep noexec
+mount | grep /run/shm | grep noexec
 
 echo "=================================================================================="
 echo "2.17 Set Sticky Bit on All World-Writable Directories"
@@ -103,299 +110,239 @@ df --local -P | awk {'if (NR!=1) print $6'} | xargs -I '{}' find '{}' -xdev -typ
 echo "=================================================================================="
 echo "2.18 Disable Mounting of cramfs Filesystems"
 /sbin/modprobe -n -v cramfs
+echo "--"
 /sbin/lsmod | grep cramfs
 
 
 echo "=================================================================================="
-echo "1.1.19 Disable Mounting of freevxfs Filesystems"
+echo "2.19 Disable Mounting of freevxfs Filesystems"
 /sbin/modprobe -n -v freevxfs
+echo "--"
 /sbin/lsmod | grep freevxfs
 
 
 echo "=================================================================================="
-echo "1.1.20 Disable Mounting of jffs2 Filesystems"
+echo "2.20 Disable Mounting of jffs2 Filesystems"
 /sbin/modprobe -n -v jffs2
+echo "--"
 /sbin/lsmod | grep jffs2
 
 
 echo "=================================================================================="
-echo "1.1.21 Disable Mounting of hfs Filesystems"
+echo "2.21 Disable Mounting of hfs Filesystems"
 /sbin/modprobe -n -v hfs
+echo "--"
+
 /sbin/lsmod | grep hfs
 
 echo "=================================================================================="
-echo "1.1.22 Disable Mounting of hfsplus Filesystems"
+echo "2.22 Disable Mounting of hfsplus Filesystems"
 /sbin/modprobe -n -v hfsplus
+echo "--"
 /sbin/lsmod | grep hfsplus
 
 echo "=================================================================================="
-echo "1.1.23 Disable Mounting of squashfs Filesystems"
+echo "2.23 Disable Mounting of squashfs Filesystems"
 /sbin/modprobe -n -v squashfs
+echo "--"
 /sbin/lsmod | grep squashfs
 
 echo "=================================================================================="
-echo "1.1.24 Disable Mounting of udf Filesystems"
+echo "2.24 Disable Mounting of udf Filesystems"
 /sbin/modprobe -n -v udf
+echo "--"
 /sbin/lsmod | grep udf
 
+echo "=================================================================================="
+echo "2.25 Disable Automounting"
+ls /etc/rc*.d | grep autofs
 
 echo "=================================================================================="
-echo "    *************** 1.2 Configure Software Updates *****************"
-echo "1.2.1 Verify CentOS GPG Key is Installed"
-rpm -q --queryformat "%{SUMMARY}\n" gpg-pubkey
+echo "    *************** 3 Secure Boot Settings *****************"
 
-
-echo "=================================================================================="
-echo "1.2.2 Verify that gpgcheck is Globally Activated"
-grep gpgcheck /etc/yum.conf
+echo "3.1 Set User/Group Owner on bootloader config"
+stat -c "%u %g" /boot/grub/grub.cfg | egrep "^0 0"
 
 echo "=================================================================================="
-echo "1.2.3 Obtain Software Package Updates with yum"
-yum check-update
-
-echo "=================================================================================="
-echo "1.2.4 Verify Package Integrity Using RPM"
-rpm -qVa | awk '$2 != "c" { print $0}'
-
+echo "3.2 Set Permissions on bootloader config"
+stat -L -c "%a" /boot/grub/grub.cfg | egrep ".00"
 
 
 echo "=================================================================================="
-echo "    *************** 1.3 Advanced Intrusion Detection Environment *****************"
-echo "1.3.1 Install AIDE"
-rpm -q aide
+echo "3.3 Set Boot Loader Password"
+grep "^set superusers" /boot/grub/grub.cfg
+echo "--"
+grep "^password" /boot/grub/grub.cfg
+
+echo "=================================================================================="
+echo "3.4 Require Authentication for Single-User Mode"
+grep ^root:[*\!]: /etc/shadow
 
 
 echo "=================================================================================="
-echo "1.3.2 Implement Periodic Execution of File Integrity"
-crontab -u root -l | grep aide
+echo "    *************** 4 Additional Process Hardening *****************"
 
-
-echo "=================================================================================="
-echo "    *************** 1.4 Configure SELinux *****************"
-echo "1.4.1 Ensure SELinux is not disabled in /boot/grub2/grub.cfg"
-grep selinux=0 /boot/grub2/grub.cfg
-grep enforcing=0 /boot/grub2/grub.cfg
-
-
-
-echo "=================================================================================="
-echo "1.4.2 Set the SELinux State"
-grep SELINUX=enforcing /etc/selinux/config
-/usr/sbin/sestatus
-
-echo "=================================================================================="
-echo "1.4.3 Set the SELinux Policy"
-grep SELINUXTYPE=targeted /etc/selinux/config
-/usr/sbin/sestatus
-
-echo "=================================================================================="
-echo "1.4.4 Remove SETroubleshoot"
-rpm -q setroubleshoot
-
-
-
-echo "=================================================================================="
-echo "1.4.5 Remove MCS Translation Service (mcstrans)"
-rpm -q mcstrans
-
-
-echo "=================================================================================="
-echo "1.4.6 Check for Unconfined Daemons"
-ps -eZ | egrep "initrc" | egrep -vw "tr|ps|egrep|bash|awk" | tr ':' ' ' | awk '{print $NF }'
-
-
-
-echo "=================================================================================="
-echo "    *************** 1.5 Secure Boot Settings *****************"
-
-echo "1.5.1 Set User/Group Owner on /boot/grub2/grub.cfg"
-stat -L -c "%u %g" /boot/grub2/grub.cfg | egrep "0 0"
-
-echo "=================================================================================="
-echo "1.5.2 Set Permissions on /boot/grub2/grub.cfg"
-stat -L -c "%a" /boot/grub2/grub.cfg | egrep ".00"
-
-
-echo "=================================================================================="
-echo "1.5.3 Set Boot Loader Password"
-grep "^set superusers" /boot/grub2/grub.cfg
-grep "^password" /boot/grub2/grub.cfg
-
-
-echo "=================================================================================="
-echo "    *************** 1.6 Additional Process Hardening *****************"
-
-echo "1.6.1 Restrict Core Dumps"
+echo "4.1 Restrict Core Dumps"
 grep "hard core" /etc/security/limits.conf
-/sbin/sysctl fs.suid_dumpable
+echo "--"
+/sbin/sysctl fs.suid dumpable
 
 
 
 echo "=================================================================================="
-echo "1.6.2 Enable Randomized Virtual Memory Region Placement"
+echo "4.2 Enable XD/NX Support on 32-bit x86 Systems"
+dmesg | grep NX
+
+echo "=================================================================================="
+echo "4.3 Enable Randomized Virtual Memory Region"
 /sbin/sysctl kernel.randomize_va_space
 
+echo "=================================================================================="
+echo "4.4 Disable Prelink"
+dpkg -s prelink
 
 echo "=================================================================================="
-echo "    *************** 1.7 Use the Latest OS Release *****************"
-uname -r
-cat /etc/centos-release
-
+echo "4.5 Activate AppArmor"
+apparmor_status
 
 echo "=================================================================================="
-echo ">>>>> 2 OS Services <<<<< "
-echo "    *************** 2.1 Remove Legacy Services *****************"
+echo "    *************** 5 OS Services *****************"
+echo "    *************** 5.1 Ensure Legacy Services are Not Enabled *****************"
 
-echo "2.1.1 Remove telnet-server"
-rpm -q telnet-server
-
-echo "=================================================================================="
-
-echo "2.1.2 Remove telnet Clients"
-rpm -q telnet
+echo "5.1.1 Ensure NIS is not installed"
+dpkg -s nis
 
 echo "=================================================================================="
-echo "2.1.3 Remove rsh-server"
-rpm -q rsh-server
+echo "5.1.2 Ensure rsh server is not enabled"
+grep ^shell /etc/inetd.conf
+grep ^login /etc/inetd.conf
+grep ^exec /etc/inetd.conf
 
 echo "=================================================================================="
-echo "2.1.4 Remove rsh"
-rpm -q rsh
+echo "5.1.3 Ensure rsh client is not installed"
+dpkg -s rsh-client
+dpkg -s rsh-redone-client
 
 echo "=================================================================================="
-echo "2.1.5 Remove NIS Client"
-rpm -q ypbind
+echo "5.1.4 Ensure talk server is not enabled"
+grep ^talk /etc/inetd.conf
+grep ^ntalk /etc/inetd.conf
 
 echo "=================================================================================="
-echo "2.1.6 Remove NIS Server"
-rpm -q ypserv
+echo "5.1.5 Ensure talk client is not installed"
+dpkg -s talk
 
 echo "=================================================================================="
-echo "2.1.7 Remove tftp"
-rpm -q tftp
+echo "5.1.6 Ensure telnet server is not enabled"
+grep ^telnet /etc/inetd.conf
 
 echo "=================================================================================="
-echo "2.1.8 Remove tftp-server"
-rpm -q tftp-server
+echo "5.1.7 Ensure tftp-server is not enabled"
+grep ^tftp /etc/inetd.conf
 
 echo "=================================================================================="
-echo "2.1.9 Remove talk"
-rpm -q talk
+echo "5.1.8 Ensure xinetd is not enabled"
+ls /etc/rc*.d | grep xinetd
 
 echo "=================================================================================="
-echo "2.1.10 Remove talk-server"
-rpm -q talk-server
+echo "5.2 Ensure chargen is not enabled"
+grep ^chargen /etc/inetd.conf
 
 echo "=================================================================================="
-echo "2.1.11 Remove xinetd"
-rpm -q xinetd
+echo "5.3 Ensure daytime is not enabled"
+grep ^daytime /etc/inetd.conf
 
 echo "=================================================================================="
-echo "2.1.12 Disable chargen-dgram"
-chkconfig --list chargen-dgram
+echo "5.4 Ensure echo is not enabled"
+grep ^echo /etc/inetd.conf
 
 echo "=================================================================================="
-echo "2.1.13 Disable chargen-stream"
-chkconfig --list chargen-stream
+echo "5.5 Ensure discard is not enabled"
+grep ^discard /etc/inetd.conf
 
 echo "=================================================================================="
-echo "2.1.14 Disable daytime-dgram"
-chkconfig --list daytime-dgram
-
-echo "=================================================================================="
-echo "2.1.15 Disable daytime-stream"
-chkconfig --list daytime-stream
-
-echo "=================================================================================="
-echo "2.1.16 Disable echo-dgram"
-chkconfig --list echo-stream
-
-echo "=================================================================================="
-echo "2.1.18 Disable tcpmux-server"
-chkconfig --list tcpmux-server
+echo "5.6 Ensure time is not enabled"
+grep ^time /etc/inetd.conf
 
 echo "=================================================================================="
 echo ">>>>> 3 Special Purpose Services <<<<< "
-
-
-echo "3.1 Set Daemon umask"
-grep umask /etc/sysconfig/init
+echo "=================================================================================="
+echo "    *************** 6 Special Purpose Services *****************"
 
 echo "=================================================================================="
-echo "3.2 Remove the X Window System"
-ls -l /etc/systemd/system/default.target | grep graphical.target
-rpm -q xorg-x11-server-common
+echo "6.1 Ensure the X Window System is not installed"
+dpkg -l xserver-xorg-core*
 
 echo "=================================================================================="
-echo "3.3 Disable Avahi Server"
+echo "6.2 Ensure Avahi Server is not enabled"
 systemctl is-enabled avahi-daemon
 
 echo "=================================================================================="
-echo "3.4 Disable Print Server - CUPS"
+echo "6.3 Ensure Print Server is not enabled"
 systemctl is-enabled cups
 
 echo "=================================================================================="
-echo "3.5 Remove DHCP Server"
-rpm -q dhcp
-
+echo "6.4 Ensure DHCP Server is not enabled"
+ls /etc/rc*.d | grep isc-dhcp-server
 
 echo "=================================================================================="
-echo "3.6 Configure Network Time Protocol (NTP)"
-grep "restrict default" /etc/ntp.conf
-grep "restrict -6 default" /etc/ntp.conf
+echo "6.5 Configure Network Time Protocol (NTP)"
+dpkg -s ntp
+grep "restrict .* default" /etc/ntp.conf
 grep "^server" /etc/ntp.conf
-grep "ntp:ntp" /etc/sysconfig/ntpd
+grep "RUNASUSER=ntp" /etc/init.d/ntp
+
+echo "=================================================================================="
+echo "6.6 Ensure LDAP is not enabled"
+dkpg -s slapd
+
+echo "=================================================================================="
+echo "6.7 Ensure NFS and RPC are not enabled"
+ls /etc/rc*.d | grep rpcbind
+ls /etc/rc*.d | grep nfs-kernel-server
+
+echo "=================================================================================="
+echo "6.8 Ensure DNS Server is not enabled"
+/sbin/sysctl is-enabled bind9
+
+echo "=================================================================================="
+echo "6.9 Ensure FTP Server is not enabled"
+/sbin/sysctl is-enabled vsftpd
+
+echo "=================================================================================="
+echo "6.10 Ensure HTTP Server is not enabled"
+/sbin/sysctl is-enabled apache2
+
+echo "=================================================================================="
+echo "6.11 Ensure IMAP and POP server is not enabled"
+/sbin/sysctl is-enabled dovecot
 
 
 echo "=================================================================================="
-echo "3.7 Remove LDAP"
-rpm -q openldap-servers
-rpm -q openldap-clients
+echo "6.12 Ensure Samba is not enabled"
+ls /etc/rc*.d | grep smbd
+
+echo "=================================================================================="
+echo "6.13 Ensure HTTP Proxy Server is not enabled"
+ls /etc/rc*.d | grep squid3
+
+echo "=================================================================================="
+echo "6.14 Ensure SNMP Proxy Server is not enabled"
+ls /etc/rc*.d | grep snmpd
 
 
 echo "=================================================================================="
-echo "3.8 Disable NFS and RPC"
-systemctl is-enabled nfslock
-systemctl is-enabled rpcgssd
-systemctl is-enabled rpcbind
-systemctl is-enabled rpcidmapd
-systemctl is-enabled rpcsvcgssd
+echo "6.15 Configure Mail Transer Agent for Loacl-Only Mode"
+netstan -an | grep LIST | grep ":24[[:space:]]"
 
 echo "=================================================================================="
-echo "3.9 Remove DNS Server"
-rpm -q bind
+echo "6.16 Ensure rsync service is not enabled"
+dkpg -s rsync
+echo "--"
+grep ^RSYNC_ENABLE /etc/default/rsync
 
-echo "=================================================================================="
-echo "3.10 Remove FTP Server"
-rpm -q vsftpd
-
-
-echo "=================================================================================="
-echo "3.11 Remove HTTP Server"
-rpm -q httpd
-
-
-echo "=================================================================================="
-echo "3.12 Remove Dovecot"
-rpm -q dovecot
-
-
-echo "=================================================================================="
-echo "3.13 Remove Samba"
-rpm -q samba
-
-echo "=================================================================================="
-echo "3.14 Remove HTTP Proxy Server"
-rpm -q squid
-
-echo "=================================================================================="
-echo "3.15 Remove SNMP Server"
-rpm -q net-snmp
-
-echo "=================================================================================="
-echo "3.16 Configure Mail Transfer Agent for Local-Only Mode"
-netstat -an | grep LIST | grep ":25[[:space:]]"
-
+## TODO: Have done everything above this line, nothing below.
+## this is the equivalent of page 57/165 of the PDF
 
 echo "=================================================================================="
 echo ">>>>> 4 Network Configuration and Firewalls <<<<< "
