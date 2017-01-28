@@ -264,8 +264,7 @@ echo "==========================================================================
 echo "5.6 Ensure time is not enabled"
 grep ^time /etc/inetd.conf
 
-echo "=================================================================================="
-echo ">>>>> 3 Special Purpose Services <<<<< "
+
 echo "=================================================================================="
 echo "    *************** 6 Special Purpose Services *****************"
 
@@ -341,134 +340,136 @@ dkpg -s rsync
 echo "--"
 grep ^RSYNC_ENABLE /etc/default/rsync
 
-## TODO: Have done everything above this line, nothing below.
-## this is the equivalent of page 57/165 of the PDF
 
 echo "=================================================================================="
-echo ">>>>> 4 Network Configuration and Firewalls <<<<< "
-echo "    *************** 4.1 Modify Network Parameters *****************"
+echo "    *************** 7 Network Configuration and Firewalls *****************"
+echo "    *************** 7.1 Modify Network Parameters (Host) *****************"
 
-echo "=================================================================================="
-echo "4.1.1 Disable IP Forwarding"
+ "=================================================================================="
+echo "7.1.1 Disable IP Forwarding"
 /sbin/sysctl net.ipv4.ip_forward
 
 echo "=================================================================================="
-echo "4.1.2 Disable Send Packet Redirects"
+echo "7.1.2 Disable Send Packet Redirects"
 /sbin/sysctl net.ipv4.conf.all.send_redirects
+echo "--"
 /sbin/sysctl net.ipv4.conf.default.send_redirects
 
 echo "=================================================================================="
 
-echo "    *************** 4.2 Modify Network Parameters *****************"
+echo "    *************** 7.2 Modify Network Parameters (Host and Router) *****************"
 
-echo "4.2.1 Disable Source Routed Packet Acceptance"
+echo "7.2.1 Disable Source Routed Packet Acceptance"
 /sbin/sysctl net.ipv4.conf.all.accept_source_route
+echo "--"
 /sbin/sysctl net.ipv4.conf.default.accept_source_route
 
 echo "=================================================================================="
 
-echo "4.2.2 Disable ICMP Redirect Acceptance"
+echo "7.2.2 Disable ICMP Redirect Acceptance"
 /sbin/sysctl net.ipv4.conf.all.accept_redirects
+echo "--"
 /sbin/sysctl net.ipv4.conf.default.accept_redirects
 
 echo "=================================================================================="
-echo "4.2.3 Disable Secure ICMP Redirect Acceptance"
+echo "7.2.3 Disable Secure ICMP Redirect Acceptance"
 /sbin/sysctl net.ipv4.conf.all.secure_redirects
+echo "--"
 /sbin/sysctl net.ipv4.conf.default.secure_redirects
 
 echo "=================================================================================="
-echo "4.2.4 Log Suspicious Packets"
+echo "7.2.4 Log Suspicious Packets"
 /sbin/sysctl net.ipv4.conf.all.log_martians
+echo "--"
 /sbin/sysctl net.ipv4.conf.default.log_martians
 
 echo "=================================================================================="
 
-echo "4.2.5 Enable Ignore Broadcast Requests"
+echo "7.2.5 Enable Ignore Broadcast Requests"
 /sbin/sysctl net.ipv4.icmp_echo_ignore_broadcasts
 
 echo "=================================================================================="
-echo "4.2.6 Enable Bad Error Message Protection"
+echo "7.2.6 Enable Bad Error Message Protection"
 /sbin/sysctl net.ipv4.icmp_ignore_bogus_error_responses
 
 echo "=================================================================================="
-echo "4.2.7 Enable RFC-recommended Source Route Validation"
+echo "7.2.7 Enable RFC-recommended Source Route Validation"
 /sbin/sysctl net.ipv4.conf.all.rp_filter
+echo "--"
 /sbin/sysctl net.ipv4.conf.default.rp_filter
 
 echo "=================================================================================="
-echo "4.2.8 Enable TCP SYN Cookies"
+echo "7.2.8 Enable TCP SYN Cookies"
 /sbin/sysctl net.ipv4.tcp_syncookies
 
 echo "=================================================================================="
 
-echo "    *************** 4.3 Wireless Networking *****************"
-echo "4.3.1 Deactivate Wireless Interfaces"
-ip link show
-
-echo "=================================================================================="
-echo "    *************** 4.4 IPv6 *****************"
-echo "---> 4.4.1 Configure IPv6 <---"
-echo "4.4.1.1 Disable IPv6 Router Advertisements"
+echo "    *************** 7.3 Configure IPv6 *****************"
+echo "7.3.1 Disable IPv6 Router Advertisements"
 /sbin/sysctl net.ipv6.conf.all.accept_ra
+echo "--"
 /sbin/sysctl net.ipv6.conf.default.accept_ra
 
 echo "=================================================================================="
-
-echo "4.4.1.2 Disable IPv6 Redirect Acceptance"
+echo "7.3.2 Disable IPv6 Redirect Acceptance"
 /sbin/sysctl net.ipv6.conf.all.accept_redirects
+echo "--"
 /sbin/sysctl net.ipv6.conf.default.accept_redirects
 
 echo "=================================================================================="
-echo "---> 4.4.2 Disable IPv6 <---"
-grep net.ipv6.conf.all.disable_ipv6 /etc/sysctl.conf
-/sbin/sysctl net.ipv6.conf.all.disable_ipv6
+echo "7.3.3 Disable IPv6"
+ip addr | grep inet6
 
 echo "=================================================================================="
-echo "    *************** 4.5 Install TCP Wrappers *****************"
+echo "    *************** 7.4 Install TCP Wrappers *****************"
 
-echo "4.5.1 Install TCP Wrappers"
-yum list tcp_wrappers
+echo "7.4.1 Install TCP Wrappers"
+dpkg -a tcpd
 
 echo "=================================================================================="
-echo "4.5.2 Create /etc/hosts.allow"
+echo "7.4.2 Create /etc/hosts.allow"
 cat /etc/hosts.allow
 
 echo "=================================================================================="
-echo "4.5.3 Verify Permissions on /etc/hosts.allow"
+echo "7.4.3 Verify Permissions on /etc/hosts.allow"
 /bin/ls -l /etc/hosts.allow
 
 echo "=================================================================================="
-echo "4.5.4 Create /etc/hosts.deny"
+echo "7.4.4 Create /etc/hosts.deny"
 grep "ALL: ALL" /etc/hosts.deny
 
 echo "=================================================================================="
-echo "4.5.5 Verify Permissions on /etc/hosts.deny"
+echo "7.4.5 Verify Permissions on /etc/hosts.deny"
 /bin/ls -l /etc/hosts.deny
 
 echo "=================================================================================="
 
-echo "    *************** 4.6 Uncommon Network Protocols *****************"
+echo "    *************** 7.5 Uncommon Network Protocols *****************"
 
-echo "4.6.1 Disable DCCP"
+echo "7.5.1 Disable DCCP"
 grep "install dccp /bin/true" /etc/modprobe.d/CIS.conf
 
 echo "=================================================================================="
-echo "4.6.2 Disable SCTP"
+echo "7.5.2 Disable SCTP"
 grep "install sctp /bin/true" /etc/modprobe.d/CIS.conf
 
 echo "=================================================================================="
-echo "4.6.3 Disable RDS"
+echo "7.5.3 Disable RDS"
 grep "install rds /bin/true" /etc/modprobe.d/CIS.conf
 
 echo "=================================================================================="
-echo "4.6.4 Disable TIPC"
+echo "7.5.4 Disable TIPC"
 grep "install tipc /bin/true" /etc/modprobe.d/CIS.conf
 
 echo "=================================================================================="
+echo "7.6 Deactivate Wireless Interfaces"
+ifconfig -a
 
-
-echo "    *************** 4.7 Enable firewalld *****************"
-systemctl is-enabled firewalld
+echo "=================================================================================="
+echo "7.7 Ensure Firewall is Active"
+dpkg -a iptables
+echo "--"
+dpkg -a iptables-persistent
 
 echo "=================================================================================="
 echo ">>>>> 5 Logging and Auditing <<<<< "
