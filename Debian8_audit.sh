@@ -472,177 +472,198 @@ echo "--"
 dpkg -a iptables-persistent
 
 echo "=================================================================================="
-echo ">>>>> 5 Logging and Auditing <<<<< "
-echo "    *************** 5.1 Configure rsyslog *****************"
+echo "    *************** 8 Logging and Auditing *****************"
+echo "    *************** 8.1 Configuring System Accounting *****************"
+echo "    *************** 8.1.1 Configure Data Retention *****************"
+echo "8.1.1.1 Configure Audit Log Storage Size"
+grep max_log_file /etc/audit/auditd.conf
 
 echo "=================================================================================="
-echo "5.1.1 Install the rsyslog package"
-rpm -q rsyslog
+echo "8.1.1.2 Disable System on Audit Log Full"
+grep space_left_action /etc/audit/auditd.conf
+echo "--"
+grep mail_action_acct /etc/audit/auditd.conf
+echo "--"
+grep admin_space_left_action /etc/audit/auditd.conf
 
 echo "=================================================================================="
-echo "5.1.2 Activate the rsyslog Service"
-systemctl is-enabled rsyslog
+echo "8.1.1.3 Keep All Auditing Information"
+grep max_log_file_action /etc/audit/auditd.conf
 
 echo "=================================================================================="
-echo "5.1.3 Configure /etc/rsyslog.conf"
+echo "8.1.2 Install and Enable auditd Service"
+dpkg -a auditd
+echo "--"
+/sbin/systemctl is-enabled auditd
+
+echo "=================================================================================="
+echo "8.1.3 Enable Auditing for Processes That Start Prior to auditd"
+grep "linux" /boot/grub/grub.cfg
+
+echo "=================================================================================="
+echo "8.1.4 Record Events That Modify Date and Time Information"
+grep time-change /etc/audit/audit.rules
+
+echo "=================================================================================="
+echo "8.1.5 Record Events That Modify User/Group Information"
+grep identity /etc/audit/audit.rules
+
+
+echo "=================================================================================="
+echo "8.1.6 Record Events That Modify the System's Network Environment"
+grep system-locale /etc/audit/audit.rules
+
+echo "=================================================================================="
+
+echo "8.1.7 Record Events That Modify the System's Mandatory Access Controls"
+grep MAC-policy /etc/audit/audit.rules
+
+echo "=================================================================================="
+
+echo "8.1.8 Collect Login and Logout Events "
+grep logins /etc/audit/audit.rules
+
+echo "=================================================================================="
+
+echo "8.1.9 Collect Session Initiation Information"
+grep session /etc/audit/audit.rules
+
+echo "=================================================================================="
+
+echo "8.1.10 Collect Discretionary Access Control Permission Modification Events"
+grep perm_mod /etc/audit/audit.rules
+
+echo "=================================================================================="
+
+echo "8.1.11 Collect Unsuccessful Unauthorized Access Attempts to Files"
+grep access /etc/audit/audit.rules
+
+echo "=================================================================================="
+
+echo "8.1.12 Collect Use of Priviledged Commands"
+echo "This needs to be manual. Use find to identify setuid/setguid programs, confirm they appear in the audit file"
+
+echo "=================================================================================="
+
+echo "8.1.13 Collect Successful File System Mounts "
+grep mounts /etc/audit/audit.rules
+
+echo "=================================================================================="
+
+echo "8.1.14 Collect File Deletion Events by User"
+grep delete /etc/audit/audit.rules
+
+echo "=================================================================================="
+
+echo "8.1.15 Collect Changes to System Administration Scope"
+grep scope /etc/audit/audit.rules
+
+echo "=================================================================================="
+
+echo "8.1.16 Collect System Administrator Actions (sudolog)"
+grep actions /etc/audit/audit.rules
+
+echo "=================================================================================="
+
+echo "8.1.17 Collect Kernel Module Loading and Unloading"
+grep modules /etc/audit/audit.rules
+
+echo "=================================================================================="
+
+echo "8.1.18 Make the Audit Configuration Immutable"
+tail -n 1 /etc/audit/audit.rules
+echo "=================================================================================="
+echo "    *************** 8.2 Configuring rsyslog *****************"
+echo "8.2.1 Install the rsyslog package"
+dpkg -s rsyslog
+
+echo "=================================================================================="
+echo "8.2.2 Ensure the rsyslog Service is activated"
+/sbin/systemctl is-enabled rsyslog
+
+echo "=================================================================================="
+echo "8.2.3 Configure /etc/rsyslog.conf"
 ls -l /var/log/
 
 echo "=================================================================================="
-echo "5.1.4 Create and Set Permissions on rsyslog Log Files"
+echo "8.2.4 Create and Set Permissions on rsyslog Log Files"
 echo "For each <logfile> listed in the /etc/rsyslog.conf file, perform the following command and verify that the <owner>:<group> is root:root and the permissions are 0600 (for sites that have not implemented a secure group) and root:securegrp with permissions of 0640 \nls -l <logfile>"
 echo "Work on it"
 
 echo "=================================================================================="
 
-echo "5.1.5 Configure rsyslog to Send Logs to a Remote Log Host"
+echo "8.2.5 Configure rsyslog to Send Logs to a Remote Log Host"
 grep "^*.*[^I][^I]*@" /etc/rsyslog.conf
 
 echo "=================================================================================="
-echo "5.1.6 Accept Remote rsyslog Messages Only on Designated Log Hosts"
+echo "8.2.6 Accept Remote rsyslog Messages Only on Designated Log Hosts"
 grep '$ModLoad imtcp.so' /etc/rsyslog.conf
+echo "--"
 grep '$InputTCPServerRun' /etc/rsyslog.conf
 
 echo "=================================================================================="
 
-
-echo "    *************** 5.2 Configure System Accounting *****************"
-
-echo "---> 5.2.1 Configure Data Retention <---"
-echo "5.2.1.1 Configure Audit Log Storage Size"
-grep max_log_file /etc/audit/auditd.conf
+echo "    *************** 8.3 Advanced Intrusion Detection Envionrment (AIDE) *****************"
+echo "8.3.1 Install AIDE"
+dpkg -s aide
 
 echo "=================================================================================="
-echo "5.2.1.2 Disable System on Audit Log Full"
-grep space_left_action /etc/audit/auditd.conf
-grep action_mail_acct /etc/audit/auditd.conf
-grep admin_space_left_action /etc/audit/auditd.conf
+
+echo "8.3.2 Implement Periodic Execution of File Integrity"
+contrab -u root -l | grep aide
 
 echo "=================================================================================="
-echo "5.2.1.3 Keep All Auditing Information"
-grep max_log_file_action /etc/audit/auditd.conf
 
-echo "=================================================================================="
-echo "5.2.2 Enable auditd Service"
-systemctl is-enabled auditd
-
-echo "=================================================================================="
-echo "5.2.3 Enable Auditing for Processes That Start Prior to auditd"
-grep "linux" /boot/grub2/grub.cfg
-
-echo "=================================================================================="
-echo "5.2.4 Record Events That Modify Date and Time Information"
-grep time-change /etc/audit/audit.rules
-
-echo "=================================================================================="
-echo "5.2.5 Record Events That Modify User/Group Information"
-grep identity /etc/audit/audit.rules
-
-echo "=================================================================================="
-echo "5.2.6 Record Events That Modify the System's Network Environment"
-grep system-locale /etc/audit/audit.rules
-
-echo "=================================================================================="
-echo "5.2.7 Record Events That Modify the System's Mandatory Access Controls"
-grep MAC-policy /etc/audit/audit.rules
-
-echo "=================================================================================="
-echo "5.2.8 Collect Login and Logout Events"
-grep logins /etc/audit/audit.rules
-
-echo "=================================================================================="
-echo "5.2.9 Collect Session Initiation Information"
-grep session /etc/audit/audit.rules
-
-echo "=================================================================================="
-echo "5.2.10 Collect Discretionary Access Control Permission Modification Events"
-grep perm_mod /etc/audit/audit.rules
-
-echo "=================================================================================="
-echo "5.2.11 Collect Unsuccessful Unauthorized Access Attempts to Files"
-grep access /etc/audit/audit.rules
-
-echo "=================================================================================="
-echo "5.2.12 Collect Use of Privileged Commands"
-find PART -xdev \( -perm -4000 -o -perm -2000 \) -type f | awk '{print "-a always,exit -F path=" $1 " -F perm=x -F auid>=1000 -F auid!=4294967295 -k privileged" }'
-
-echo "=================================================================================="
-echo "5.2.13 Collect Successful File System Mounts"
-grep mounts /etc/audit/audit.rules
-
-echo "=================================================================================="
-echo "5.2.14 Collect File Deletion Events by User"
-grep delete /etc/audit/audit.rules
-
-echo "=================================================================================="
-echo "5.2.15 Collect Changes to System Administration Scope"
-grep scope /etc/audit/audit.rules
-
-echo "=================================================================================="
-echo "5.2.16 Collect System Administrator Actions (sudolog)"
-grep actions /etc/audit/audit.rules
-
-echo "=================================================================================="
-echo "5.2.17 Collect Kernel Module Loading and Unloading"
-grep modules /etc/audit/audit.rules
-
-echo "=================================================================================="
-echo "5.2.18 Make the Audit Configuration Immutable"
-grep "^-e 2" /etc/audit/audit.rules
+echo "8.4 Configure logrotate"
+dpkg -s aide
 
 echo "=================================================================================="
 echo "*************** 5.3 Configure logrotate *****************"
-grep '{' /etc/logrotate.d/syslog
+grep '{' /etc/logrotate.d/rsyslog
 
 echo "=================================================================================="
 
-echo ">>>>> 6 System Access, Authentication and Authorization <<<<< "
-echo "*************** 6.1 Configure cron and anacron *****************"
-
-echo "6.1.1 Enable anacron Daemon"
-rpm -q cronie-anacron
+echo ">>>>> 9 System Access, Authentication and Authorization <<<<< "
+echo "*************** 9.1 Configure cron *****************"
 
 echo "=================================================================================="
-echo "6.1.2 Enable crond Daemon"
-systemctl is-enabled crond
+echo "9.1.1 Enable cron Daemon"
+/sbin/systemctl is-enabled crond
+echo "--"
+/sbin/systemctl is-enabled anacron
 
 echo "=================================================================================="
-echo "6.1.3 Set User/Group Owner and Permission on /etc/anacrontab"
-stat -L -c "%a %u %g" /etc/anacrontab | egrep ".00 0 0"
+echo "9.1.2 Set User/Group Owner and Permission on /etc/crontab"
+stat -c "%a %u %g" /etc/crontab | egrep ".00 0 0"
 
 echo "=================================================================================="
-echo "6.1.4 Set User/Group Owner and Permission on /etc/crontab"
-stat -L -c "%a %u %g" /etc/crontab | egrep ".00 0 0"
+echo "9.1.3 Set User/Group Owner and Permission on /etc/cron.hourly"
+stat -c "%a %u %g" /etc/cron.hourly | egrep ".00 0 0"
 
 echo "=================================================================================="
-echo "6.1.5 Set User/Group Owner and Permission on /etc/cron.hourly"
-stat -L -c "%a %u %g" /etc/cron.hourly | egrep ".00 0 0"
+echo "9.1.4 Set User/Group Owner and Permission on /etc/cron.daily"
+stat -c "%a %u %g" /etc/cron.daily | egrep ".00 0 0"
 
 echo "=================================================================================="
-echo "6.1.6 Set User/Group Owner and Permission on /etc/cron.daily"
-stat -L -c "%a %u %g" /etc/cron.daily | egrep ".00 0 0"
+echo "9.1.5 Set User/Group Owner and Permission on /etc/cron.weekly"
+stat -c "%a %u %g" /etc/cron.weekly | egrep ".00 0 0"
 
 echo "=================================================================================="
-echo "6.1.7 Set User/Group Owner and Permission on /etc/cron.weekly"
-stat -L -c "%a %u %g" /etc/cron.weekly | egrep ".00 0 0"
+echo "9.1.6 Set User/Group Owner and Permission on /etc/cron.monthly"
+stat -c "%a %u %g" /etc/cron.monthly | egrep ".00 0 0"
 
 echo "=================================================================================="
-echo "6.1.8 Set User/Group Owner and Permission on /etc/cron.monthly"
-stat -L -c "%a %u %g" /etc/cron.monthly | egrep ".00 0 0"
+echo "9.1.7 Set User/Group Owner and Permission on /etc/cron.d"
+stat -c "%a %u %g" /etc/cron.d | egrep ".00 0 0"
 
 echo "=================================================================================="
-echo "6.1.9 Set User/Group Owner and Permission on /etc/cron.d"
-stat -L -c "%a %u %g" /etc/cron.d | egrep ".00 0 0"
-
-echo "=================================================================================="
-echo "6.1.10 Restrict at Daemon"
-stat -L /etc/at.deny > /dev/null
-stat -L -c "%a %u %g" /etc/at.allow | egrep ".00 0 0"
-
-echo "=================================================================================="
-echo "6.1.11 Restrict at/cron to Authorized Users"
+echo "9.1.8 Restrict at/cron to Authorized Users"
 ls -l /etc/cron.deny
+echo "--"
 ls -l /etc/at.deny
+echo "--"
 ls -l /etc/cron.allow
+echo "--"
 ls -l /etc/at.allow
 
 echo "=================================================================================="
