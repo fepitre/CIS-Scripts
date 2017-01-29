@@ -494,7 +494,7 @@ echo "==========================================================================
 echo "8.1.2 Install and Enable auditd Service"
 dpkg -a auditd
 echo "--"
-/sbin/systemctl is-enabled auditd
+systemctl is-enabled auditd
 
 echo "=================================================================================="
 echo "8.1.3 Enable Auditing for Processes That Start Prior to auditd"
@@ -628,9 +628,9 @@ echo "*************** 9.1 Configure cron *****************"
 
 echo "=================================================================================="
 echo "9.1.1 Enable cron Daemon"
-/sbin/systemctl is-enabled crond
+systemctl is-enabled crond
 echo "--"
-/sbin/systemctl is-enabled anacron
+systemctl is-enabled anacron
 
 echo "=================================================================================="
 echo "9.1.2 Set User/Group Owner and Permission on /etc/crontab"
@@ -890,7 +890,7 @@ echo "13.6 Ensure root PATH Integrity"
 if [ "`echo $PATH | /bin/grep :: `" != "" ]; then
 echo "Empty Directory in PATH (::)"
 fi
-if [ "`echo $PATH | bin/grep :$`" != "" ]; then
+if [ "`echo $PATH | /bin/grep :$`" != "" ]; then
 echo "Trailing : in PATH"
 fi
 
@@ -1071,7 +1071,7 @@ done
 echo "=================================================================================="
 echo "13.17 Check for Duplicate Group Names"
 echo "The Output for the Audit of Control 9.2.19 - Check for Duplicate Group Names is"
-cat /etc/group | cut -f1 -d":" | /usr/bin/sort -n | /usr/bin/uniq -c | while read x ;do[ -z "${x}" ] && break
+cat /etc/group | cut -f1 -d":" | /usr/bin/sort -n | /usr/bin/uniq -c | while read x ; do [ -z "${x}" ] && break
 set - $x
 if [ $1 -gt 1 ]; then
 gids=`/usr/bin/awk -F: '($1 == n) { print $3 }' n=$2 /etc/group | xargs`
