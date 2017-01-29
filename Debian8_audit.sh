@@ -811,7 +811,7 @@ egrep '(\\v|\\r|\\m|\\s)' /etc/issue
 echo "--"
 egrep '(\\v|\\r|\\m|\\s)' /etc/motd
 echo "--"
-egrep'(\\v|\\r|\\m|\\s)' /etc/issue.net
+egrep '(\\v|\\r|\\m|\\s)' /etc/issue.net
 
 echo "=================================================================================="
 echo "11.3 Set Graphical Warning Banner"
@@ -903,11 +903,11 @@ shift
 continue
 fi
 if [ -d $1 ]; then
-dirperm=`/bin/ls -ldH $1 | /bin/cut -f1 -d" "`
-if [ `echo $dirperm | /bin/cut -c6 ` != "-" ]; then
+dirperm=`/bin/ls -ldH $1 | /usr/bin/cut -f1 -d" "`
+if [ `echo $dirperm | /usr/bin/cut -c6 ` != "-" ]; then
 echo "Group Write permission set on directory $1"
 fi
-if [ `echo $dirperm | /bin/cut -c9 ` != "-" ]; then
+if [ `echo $dirperm | /usr/bin/cut -c9 ` != "-" ]; then
 echo "Other Write permission set on directory $1"
 fi
 dirown=`ls -ldH $1 | awk '{print $3}'`
@@ -923,32 +923,32 @@ done
 echo "=================================================================================="
 
 echo "13.7 Check Permissions on User Home Directories"
-for dir in `/bin/cat /etc/passwd | /bin/egrep -v '(root|halt|sync|shutdown)' |/bin/awk -F: '($8 == "PS" && $7 != "/sbin/nologin") { print $6 }'`; do
-dirperm=`/bin/ls -ld $dir | /bin/cut -f1 -d" "`
-if [ `echo $dirperm | /bin/cut -c6 ` != "-" ]; then
+for dir in `/bin/cat /etc/passwd | /bin/egrep -v '(root|halt|sync|shutdown)' |/usr/bin/awk -F: '($8 == "PS" && $7 != "/sbin/nologin") { print $6 }'`; do
+dirperm=`/bin/ls -ld $dir | /usr/bin/cut -f1 -d" "`
+if [ `echo $dirperm | /usr/bin/cut -c6 ` != "-" ]; then
 echo "Group Write permission set on directory $dir"
 fi
-if [ `echo $dirperm | /bin/cut -c8 ` != "-" ]; then
+if [ `echo $dirperm | /usr/bin/cut -c8 ` != "-" ]; then
 echo "Other Read permission set on directory $dir"
 fi
-if [ `echo $dirperm | /bin/cut -c9 ` != "-" ]; then
+if [ `echo $dirperm | /usr/bin/cut -c9 ` != "-" ]; then
 echo "Other Write permission set on directory $dir"
 fi
-if [ `echo $dirperm | /bin/cut -c10 ` != "-" ]; then
+if [ `echo $dirperm | /usr/bin/cut -c10 ` != "-" ]; then
 echo "Other Execute permission set on directory $dir"
 fi
 done
 
 echo "=================================================================================="
 echo "13.8 Check User Dot File Permissions"
-for dir in `/bin/cat /etc/passwd | /bin/egrep -v '(root|sync|halt|shutdown)' | /bin/awk -F: '($7 != "/sbin/nologin") { print $6 }'`; do
+for dir in `/bin/cat /etc/passwd | /bin/egrep -v '(root|sync|halt|shutdown)' | /usr/bin/awk -F: '($7 != "/sbin/nologin") { print $6 }'`; do
 for file in $dir/.[A-Za-z0-9]*; do
 if [ ! -h "$file" -a -f "$file" ]; then
-fileperm=`/bin/ls -ld $file | /bin/cut -f1 -d" "`
-if [ `echo $fileperm | /bin/cut -c6 ` != "-"]; then
+fileperm=`/bin/ls -ld $file | /usr/bin/cut -f1 -d" "`
+if [ `echo $fileperm | /usr/bin/cut -c6 ` != "-" ]; then
 echo "Group Write permission set on file $file"
 fi
-if [ `echo $fileperm | /bin/cut -c9 ` != "-"]; then
+if [ `echo $fileperm | /usr/bin/cut -c9 ` != "-" ]; then
 echo "Other Write permission set on file $file"
 fi
 fi
@@ -958,31 +958,31 @@ done
 echo "=================================================================================="
 echo "13.9 Check Permissions on User .netrc Files"
 
-for dir in `/bin/cat /etc/passwd | /bin/egrep -v '(root|sync|halt|shutdown)' |/bin/awk -F: '($7 != "/sbin/nologin") { print $6 }'`; do
+for dir in `/bin/cat /etc/passwd | /bin/egrep -v '(root|sync|halt|shutdown)' |/usr/bin/awk -F: '($7 != "/sbin/nologin") { print $6 }'`; do
 for file in $dir/.netrc; do
 if [ ! -h "$file" -a -f "$file" ]; then
-fileperm=`/bin/ls -ld $file | /bin/cut -f1 -d" "`
-if [ `echo $fileperm | /bin/cut -c5 ` != "-" ]
+fileperm=`/bin/ls -ld $file | /usr/bin/cut -f1 -d" "`
+if [ `echo $fileperm | /usr/bin/cut -c5 ` != "-" ]
 then
 echo "Group Read set on $file"
 fi
-if [ `echo $fileperm | /bin/cut -c6 ` != "-" ]
+if [ `echo $fileperm | /usr/bin/cut -c6 ` != "-" ]
 then
 echo "Group Write set on $file"
 fi
-if [ `echo $fileperm | /bin/cut -c7 ` != "-" ]
+if [ `echo $fileperm | /usr/bin/cut -c7 ` != "-" ]
 then
 echo "Group Execute set on $file"
 fi
-if [ `echo $fileperm | /bin/cut -c8 ` != "-" ]
+if [ `echo $fileperm | /usr/bin/cut -c8 ` != "-" ]
 then
 echo "Other Read set on $file"
 fi
-if [ `echo $fileperm | /bin/cut -c9 ` != "-" ]
+if [ `echo $fileperm | /usr/bin/cut -c9 ` != "-" ]
 then
 echo "Other Write set on $file"
 fi
-if [ `echo $fileperm | /bin/cut -c10 ` != "-" ]
+if [ `echo $fileperm | /usr/bin/cut -c10 ` != "-" ]
 then
 echo "Other Execute set on $file"
 fi
@@ -993,7 +993,7 @@ done
 echo "=================================================================================="
 echo "13.10 Check for Presence of User .rhosts Files"
 
-for dir in `/bin/cat /etc/passwd | /bin/egrep -v '(root|halt|sync|shutdown)' |/bin/awk -F: '($7 != "/sbin/nologin") { print $6 }'`; do
+for dir in `/bin/cat /etc/passwd | /bin/egrep -v '(root|halt|sync|shutdown)' |/usr/bin/awk -F: '($7 != "/sbin/nologin") { print $6 }'`; do
 for file in $dir/.rhosts; do
 if [ ! -h "$file" -a -f "$file" ]; then
 echo ".rhosts file in $dir"
@@ -1035,7 +1035,7 @@ echo "==========================================================================
 echo "13.14 Check for Duplicate UIDs"
 
 echo "The Output for the Audit of Control 13.14- Check for Duplicate UIDs is"
-/bin/cat /etc/passwd | /bin/cut -f3 -d":" | /bin/sort -n | /usr/bin/uniq -c |while read x ; do [ -z "${x}" ] && break
+/bin/cat /etc/passwd | /usr/bin/cut -f3 -d":" | /usr/bin/sort -n | /usr/bin/uniq -c |while read x ; do [ -z "${x}" ] && break
 set - $x
 if [ $1 -gt 1 ]; then
 users=`/usr/bin/awk -F: '($3 == n) { print $1 }' n=$2 /etc/passwd | /usr/bin/xargs`
@@ -1047,7 +1047,7 @@ echo "==========================================================================
 echo "13.15 Check for Duplicate GIDs"
 
 echo "The Output for the Audit of Control 9.2.15 - Check for Duplicate GIDs is"
-/bin/cat /etc/group | /bin/cut -f3 -d":" | /bin/sort -n | /bin/uniq -c |while read x ; do [ -z "${x}" ] && break
+/bin/cat /etc/group | /usr/bin/cut -f3 -d":" | /usr/bin/sort -n | /usr/bin/uniq -c |while read x ; do [ -z "${x}" ] && break
 set - $x
 if [ $1 -gt 1 ]; then
 grps=`/usr/bin/awk -F: '($3 == n) { print $1 }' n=$2 /etc/group | xargs`
@@ -1059,17 +1059,19 @@ echo "==========================================================================
 
 echo "13.16 Check for Duplicate User Names"
 echo "The Output for the Audit of Control 9.2.18 - Check for Duplicate User Names is"
-cat /etc/passwd | cut -f1 -d":" | /bin/sort -n | /usr/bin/uniq -c |while read x ; do[ -z "${x}" ] && break
-set - $x
-if [ $1 -gt 1 ]; then
-uids=`/usr/bin/awk -F: '($1 == n) { print $3 }' n=$2 /etc/passwd | xargs`
-echo "Duplicate User Name ($2): ${uids}"
-fi
+cat /etc/passwd | /usr/bin/cut -f1 -d":" | /usr/bin/sort -n | /usr/bin/uniq -c | while read x ; do
+  [ -z "${x}" ] && break
+  set - $x
+  if [ $1 -gt 1 ]; then
+    uids=`/usr/bin/awk -F: '($1 == n) { print $3 }' n=$2 /etc/passwd | xargs`
+    echo "Duplicate User Name ($2): ${uids}"
+  fi
 done
+
 echo "=================================================================================="
 echo "13.17 Check for Duplicate Group Names"
 echo "The Output for the Audit of Control 9.2.19 - Check for Duplicate Group Names is"
-cat /etc/group | cut -f1 -d":" | /bin/sort -n | /usr/bin/uniq -c | while read x ;do[ -z "${x}" ] && break
+cat /etc/group | cut -f1 -d":" | /usr/bin/sort -n | /usr/bin/uniq -c | while read x ;do[ -z "${x}" ] && break
 set - $x
 if [ $1 -gt 1 ]; then
 gids=`/usr/bin/awk -F: '($1 == n) { print $3 }' n=$2 /etc/group | xargs`
